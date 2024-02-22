@@ -1,4 +1,4 @@
-
+-- This code generates an account calendar for financial reporting: 
 
 IF OBJECT_ID('DM.AccountingCalendar') IS NOT NULL
 BEGIN
@@ -255,3 +255,41 @@ BEGIN
 
 	END
 END
+
+/*
+CREATE TABLE DM.AccountingCalendar
+ 
+		(
+				  DateKey					INT				NOT NULL,
+				  DateValue					DATE			NOT NULL,
+				  FiscalCountWeek			INT				NOT NULL,
+				  FiscalCountDay			INT				NOT NULL	CONSTRAINT TDF_DM_AccountingCalendar_FiscalCountDay DEFAULT 0,
+				  FiscalYear 				INT				NOT NULL,
+				  FiscalYearLabel 			VARCHAR(80)		NOT NULL,
+				  FiscalQuarter 			INT				NOT NULL,
+				  FiscalYearQuarter 		INT				NOT NULL,
+				  FiscalQuarterLabel		VARCHAR(80)		NOT NULL,
+				  FiscalMonth 				INT				NOT NULL,
+				  FiscalMonthCountDay		INT				NOT NULL	CONSTRAINT TDF_DM_AccountingCalendar_FiscalMonthCountDay DEFAULT 0,
+				  FiscalMonthLabel 			VARCHAR(80)		NOT NULL,
+				  FiscalPeriod 				INT				NOT NULL,
+				  FiscalPeriodLabel 		VARCHAR(80)		NOT NULL,
+				  RetailCountWeek			INT				NOT NULL,
+				  FiscalWeekNoOfMonth		INT				NOT NULL,
+				  FiscalWeekLabel 			VARCHAR(80)		NOT NULL,
+				  DayofWeekStartsSun		INT				NOT NULL, 
+				  WeekDayName				VARCHAR(80)		NOT NULL,
+				  FiscalCalendarWeekName	VARCHAR(80)		NOT NULL,
+				  CalendarDateName			VARCHAR(80)		NOT NULL,
+				  CalendarYear 				INT				NOT NULL,
+				  CalendarQuarter 			INT				NOT NULL,
+				  CalendarQuarterLabel 		VARCHAR(80)		NOT NULL,
+				  CalendarMonth 			INT				NOT NULL,
+				  CalendarMonthLabel		VARCHAR(80)		NOT NULL,
+				  WeekStartingDate			DATE			NOT NULL,
+				  WeekEndingDate			DATE			NOT NULL,
+				  CreatedDate				DATETIME2(7)    NOT NULL CONSTRAINT DF_DM_AccountingCalendar_CreatedDate DEFAULT SYSDATETIME(),
+				  UpdatedDate				DATETIME2(7)    NOT NULL CONSTRAINT DF_DM_AccountingCalendar_UpdatedDate DEFAULT SYSDATETIME()
+		);   
+GO
+*/
