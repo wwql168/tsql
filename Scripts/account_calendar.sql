@@ -1,4 +1,4 @@
--- This code generates an account calendar for financial reporting: 
+-- This code generates an account calendar for financial reporting from year of 2020 to year of 2050: 
 
 IF OBJECT_ID('DM.AccountingCalendar') IS NOT NULL
 BEGIN
