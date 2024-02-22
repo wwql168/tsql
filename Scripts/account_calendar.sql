@@ -12,11 +12,11 @@ BEGIN
  
 		DECLARE 
 				  @JdeJulian				VARCHAR(80),
-				  @FiscalCalENDarStart		DATE			= '2020/02/01',
-				  @ENDOfCalENDar			DATE			= '2050/12/31',
+				  @FiscalCalENDarStart			DATE				= '2020/02/01',
+				  @ENDOfCalENDar			DATE				= '2050/12/31',
 				  @CurrentDate				DATE,
 				  @RunningDaySeed			INT				= 1,
-				  @RunningPeriodSeed		INT				= 1,
+				  @RunningPeriodSeed			INT				= 1,
 				  @WorkWeekSeed				INT,
 				  @RunningWeekSeed			INT				= 1,
 				  @FiscalYearSeed			INT				= 2020,
@@ -27,40 +27,40 @@ BEGIN
 				  @RetailCountWeek			INT      
  
 		/*  These are iteration variables, do not mess with these  */
-		SELECT  @WorkPeriodSeed			= 1,
+		SELECT  @WorkPeriodSeed				= 1,
 				@WorkWeekSeed			= 1,
 				@WeekOfMonth			= 1,
-				@IsLeapYear				= 0,
+				@IsLeapYear			= 0,
 				@WorkQuarterSeed		= 1
 
 		IF OBJECT_ID('tempdb.dbo.#FiscalTimePeriods', 'U') IS NOT NULL DROP TABLE #FiscalTimePeriods; 
 
 		CREATE TABLE #FiscalTimePeriods 
 		(
-				  DateKey					INT,
+				  DateKey				INT,
 				  CalendarDate				DATE,
 				  FiscalWeekNo				INT,
 				  FiscalYear 				INT,
 				  FiscalYearLabel 			VARCHAR(80),
 				  FiscalQuarter 			INT,
-				  FiscalYearQuarter 		INT,
-				  FiscalQuarterLabel		VARCHAR(80),
+				  FiscalYearQuarter 			INT,
+				  FiscalQuarterLabel			VARCHAR(80),
 				  FiscalMonth 				INT,
 				  FiscalMonthLabel 			VARCHAR(80),
 				  FiscalPeriod 				INT,
-				  FiscalPeriodLabel 		VARCHAR(80),
+				  FiscalPeriodLabel 			VARCHAR(80),
 				  RetailCountWeek			INT,
-				  FiscalWeekNoOfMonth		INT,
+				  FiscalWeekNoOfMonth			INT,
 				  FiscalWeekLabel 			VARCHAR(80),
-				  DayofWeekStartsSun		INT, 
+				  DayofWeekStartsSun			INT, 
 				  WeekDayName				VARCHAR(80),
-				  FiscalCalendarWeekName	VARCHAR(80),
+				  FiscalCalendarWeekName		VARCHAR(80),
 				  CalendarDateName			VARCHAR(80),
 				  CalendarYear 				INT,
 				  CalendarQuarter 			INT,
-				  CalendarQuarterLabel 		VARCHAR(80),
+				  CalendarQuarterLabel 			VARCHAR(80),
 				  CalendarMonth 			INT,
-				  CalendarMonthLabel		VARCHAR(80),
+				  CalendarMonthLabel			VARCHAR(80),
 				  WeekStartingDate			DATE,
 				  WeekEndingDate			DATE
 		);   
@@ -84,26 +84,26 @@ BEGIN
 				   ,FiscalYearLabel			= 'FY ' + CONVERT(VARCHAR(4), @FiscalYearSeed) 
 				   ,WorkQuarter				= @WorkQuarterSeed
 				   ,FiscalQuarter			= CONVERT(INT, CONVERT(VARCHAR(4), @FiscalYearSeed) + CONVERT(VARCHAR(2), @WorkQuarterSeed))
-				   ,FiscalQuarterLabel		= 'FY ' + CONVERT(VARCHAR(4), @FiscalYearSeed) + ' Q' + CONVERT(VARCHAR(2), @WorkQuarterSeed)
+				   ,FiscalQuarterLabel			= 'FY ' + CONVERT(VARCHAR(4), @FiscalYearSeed) + ' Q' + CONVERT(VARCHAR(2), @WorkQuarterSeed)
 				   ,FiscalMonth				= @WorkPeriodSeed
-				   ,FiscalMonthLabel		= DATENAME(MM, CONVERT(VARCHAR(4), @FiscalYearSeed) + '/' + CONVERT(VARCHAR(2), CASE @WorkPeriodSeed WHEN 11 THEN 12 ELSE (@WorkPeriodSeed+1)%12 END) + '/1') 
+				   ,FiscalMonthLabel			= DATENAME(MM, CONVERT(VARCHAR(4), @FiscalYearSeed) + '/' + CONVERT(VARCHAR(2), CASE @WorkPeriodSeed WHEN 11 THEN 12 ELSE (@WorkPeriodSeed+1)%12 END) + '/1') 
 				   ,FiscalPeriod			= CONVERT(INT, CONVERT(VARCHAR(4), @FiscalYearSeed) + CONVERT(VARCHAR(2), @WorkQuarterSeed) + RIGHT('0' + CONVERT(VARCHAR(2), @WorkPeriodSeed), 2))
-				   ,FiscalPeriodLabel		= 'FY ' + CONVERT(VARCHAR(4), @FiscalYearSeed) + ' M ' + RIGHT('0' + CONVERT(VARCHAR(2), @WorkPeriodSeed), 2) 
+				   ,FiscalPeriodLabel			= 'FY ' + CONVERT(VARCHAR(4), @FiscalYearSeed) + ' M ' + RIGHT('0' + CONVERT(VARCHAR(2), @WorkPeriodSeed), 2) 
 				   ,RetailCountWeek			= CASE WHEN (@CurrentDate BETWEEN DATEADD(D, 1- DATEPART(DW, DATEADD(yy, DATEDIFF(yy, 0, DATEADD(yy,1,@CurrentDate)), 0)), DATEADD(yy, DATEDIFF(yy, 0, DATEADD(yy,1,@CurrentDate)), 0)) 
 																	 AND  DATEADD(D, 7 - DATEPART(DW, DATEADD(yy, DATEDIFF(yy, 0, DATEADD(yy,1,@CurrentDate)), 0)), DATEADD(yy, DATEDIFF(yy, 0, DATEADD(yy,1,@CurrentDate)), 0))) 
 															AND Year(@CurrentDate) = YEAR(DATEADD(D, 1- DATEPART(DW, DATEADD(yy, DATEDIFF(yy, 0, DATEADD(yy,1,@CurrentDate)), 0)), DATEADD(yy, DATEDIFF(yy, 0, DATEADD(yy,1,@CurrentDate)), 0))) THEN 1
 												   ELSE ((datediff(dd, DATEADD(yy, DATEDIFF(yy, 0, @CurrentDate), 0),@CurrentDate) -1 + DATEPART(DW,DATEADD(yy, DATEDIFF(yy, 0, @CurrentDate), 0)))/7)+1  END
 				   ,WeekOfMonth				= @WeekOfMonth
 				   ,FiscalWeekLabel			= 'FY ' + CONVERT(VARCHAR(4), @FiscalYearSeed) + ' M ' + RIGHT('0' + CONVERT(VARCHAR(2), @WorkPeriodSeed), 2) + ' WK ' + CONVERT(CHAR(1), @WeekOfMonth)
-				   ,DayofWeek_StartsSun		= DATEDIFF(DAY,'17530107',@CurrentDate)%7 + 1
+				   ,DayofWeek_StartsSun			= DATEDIFF(DAY,'17530107',@CurrentDate)%7 + 1
 				   ,WeekDayName				= DATENAME(weekday,@CurrentDate)
-				   ,FiscalCalENDarWeekName	= DATENAME(MM, CONVERT(VARCHAR(4), @FiscalYearSeed) + '/' + CONVERT(VARCHAR(2), CASE @WorkPeriodSeed WHEN 11 THEN 12 ELSE (@WorkPeriodSeed+1)%12 END) + '/1') + ' Week ' + CAST(@WeekOfMonth AS VARCHAR(80)) 
-				   ,CalENDarDateName		= DATENAME(MM, @CurrentDate) +' ' + CAST(DAY(@CurrentDate) AS VARCHAR(80)) 
+				   ,FiscalCalENDarWeekName		= DATENAME(MM, CONVERT(VARCHAR(4), @FiscalYearSeed) + '/' + CONVERT(VARCHAR(2), CASE @WorkPeriodSeed WHEN 11 THEN 12 ELSE (@WorkPeriodSeed+1)%12 END) + '/1') + ' Week ' + CAST(@WeekOfMonth AS VARCHAR(80)) 
+				   ,CalENDarDateName			= DATENAME(MM, @CurrentDate) +' ' + CAST(DAY(@CurrentDate) AS VARCHAR(80)) 
 				   ,CalENDarYear			= YEAR(@CurrentDate) 
 				   ,CalENDarQuarter			= DATEPART(QUARTER, @CurrentDate) 
-				   ,CalENDarQuarterLabel	= CASE DATEPART(QUARTER, @CurrentDate) WHEN 1 THEN '1st' WHEN 2 THEN '2nd' WHEN 3 THEN '3rd' WHEN 4 THEN '4th' END + ' Quarter ' + CONVERT(VARCHAR(4), year (@CurrentDate))
+				   ,CalENDarQuarterLabel		= CASE DATEPART(QUARTER, @CurrentDate) WHEN 1 THEN '1st' WHEN 2 THEN '2nd' WHEN 3 THEN '3rd' WHEN 4 THEN '4th' END + ' Quarter ' + CONVERT(VARCHAR(4), year (@CurrentDate))
 				   ,CalENDarMonth			= MONTH(@CurrentDate) 
-				   ,CalENDarMonthLabel		= DATENAME(MM, @CurrentDate)
+				   ,CalENDarMonthLabel			= DATENAME(MM, @CurrentDate)
 				   ,WeekStarting			= DATEADD(D, 1- DATEPART(DW, @CurrentDate), @CurrentDate)
 				   ,WeekENDing				= DATEADD(D, 7 - DATEPART(DW, @CurrentDate), @CurrentDate) 
 
@@ -260,36 +260,36 @@ END
 CREATE TABLE DM.AccountingCalendar
  
 		(
-				  DateKey					INT				NOT NULL,
-				  DateValue					DATE			NOT NULL,
-				  FiscalCountWeek			INT				NOT NULL,
-				  FiscalCountDay			INT				NOT NULL	CONSTRAINT TDF_DM_AccountingCalendar_FiscalCountDay DEFAULT 0,
-				  FiscalYear 				INT				NOT NULL,
+				  DateKey				INT			NOT NULL,
+				  DateValue				DATE			NOT NULL,
+				  FiscalCountWeek			INT			NOT NULL,
+				  FiscalCountDay			INT			NOT NULL	CONSTRAINT TDF_DM_AccountingCalendar_FiscalCountDay DEFAULT 0,
+				  FiscalYear 				INT			NOT NULL,
 				  FiscalYearLabel 			VARCHAR(80)		NOT NULL,
-				  FiscalQuarter 			INT				NOT NULL,
-				  FiscalYearQuarter 		INT				NOT NULL,
-				  FiscalQuarterLabel		VARCHAR(80)		NOT NULL,
-				  FiscalMonth 				INT				NOT NULL,
-				  FiscalMonthCountDay		INT				NOT NULL	CONSTRAINT TDF_DM_AccountingCalendar_FiscalMonthCountDay DEFAULT 0,
+				  FiscalQuarter 			INT			NOT NULL,
+				  FiscalYearQuarter 			INT			NOT NULL,
+				  FiscalQuarterLabel			VARCHAR(80)		NOT NULL,
+				  FiscalMonth 				INT			NOT NULL,
+				  FiscalMonthCountDay			INT			NOT NULL	CONSTRAINT TDF_DM_AccountingCalendar_FiscalMonthCountDay DEFAULT 0,
 				  FiscalMonthLabel 			VARCHAR(80)		NOT NULL,
-				  FiscalPeriod 				INT				NOT NULL,
-				  FiscalPeriodLabel 		VARCHAR(80)		NOT NULL,
-				  RetailCountWeek			INT				NOT NULL,
-				  FiscalWeekNoOfMonth		INT				NOT NULL,
+				  FiscalPeriod 				INT			NOT NULL,
+				  FiscalPeriodLabel 			VARCHAR(80)		NOT NULL,
+				  RetailCountWeek			INT			NOT NULL,
+				  FiscalWeekNoOfMonth			INT			NOT NULL,
 				  FiscalWeekLabel 			VARCHAR(80)		NOT NULL,
-				  DayofWeekStartsSun		INT				NOT NULL, 
+				  DayofWeekStartsSun			INT			NOT NULL, 
 				  WeekDayName				VARCHAR(80)		NOT NULL,
-				  FiscalCalendarWeekName	VARCHAR(80)		NOT NULL,
+				  FiscalCalendarWeekName		VARCHAR(80)		NOT NULL,
 				  CalendarDateName			VARCHAR(80)		NOT NULL,
-				  CalendarYear 				INT				NOT NULL,
-				  CalendarQuarter 			INT				NOT NULL,
-				  CalendarQuarterLabel 		VARCHAR(80)		NOT NULL,
-				  CalendarMonth 			INT				NOT NULL,
-				  CalendarMonthLabel		VARCHAR(80)		NOT NULL,
+				  CalendarYear 				INT			NOT NULL,
+				  CalendarQuarter 			INT			NOT NULL,
+				  CalendarQuarterLabel 			VARCHAR(80)		NOT NULL,
+				  CalendarMonth 			INT			NOT NULL,
+				  CalendarMonthLabel			VARCHAR(80)		NOT NULL,
 				  WeekStartingDate			DATE			NOT NULL,
 				  WeekEndingDate			DATE			NOT NULL,
-				  CreatedDate				DATETIME2(7)    NOT NULL CONSTRAINT DF_DM_AccountingCalendar_CreatedDate DEFAULT SYSDATETIME(),
-				  UpdatedDate				DATETIME2(7)    NOT NULL CONSTRAINT DF_DM_AccountingCalendar_UpdatedDate DEFAULT SYSDATETIME()
+				  CreatedDate				DATETIME2(7)   	 	NOT NULL CONSTRAINT DF_DM_AccountingCalendar_CreatedDate DEFAULT SYSDATETIME(),
+				  UpdatedDate				DATETIME2(7)    	NOT NULL CONSTRAINT DF_DM_AccountingCalendar_UpdatedDate DEFAULT SYSDATETIME()
 		);   
 GO
 */
